@@ -16,7 +16,7 @@ db.run(`CREATE TABLE IF NOT EXISTS contrasenas (
 
 // Middlewares
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'))); // Aquí no hay errores, así debe ir
 
 // Ruta para guardar contraseñas
 app.post('/guardar', (req, res) => {
@@ -27,7 +27,7 @@ app.post('/guardar', (req, res) => {
   });
 });
 
-// Ruta para ver contraseñas
+// Ruta para obtener todas las contraseñas
 app.get('/datos', (req, res) => {
   db.all(`SELECT * FROM contrasenas`, [], (err, rows) => {
     if (err) return res.status(500).json({ mensaje: 'Error al leer' });
