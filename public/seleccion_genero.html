@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Selecciona tu género</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .container {
+            background: rgba(0,0,0,0.6);
+            padding: 40px 30px;
+            border-radius: 15px;
+            width: 350px;
+            box-shadow: 0 0 20px rgba(255,75,43,0.6);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 15px;
+            font-size: 1.9rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 6px #ff4b2b;
+        }
+        p {
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+            color: #ffb3b3;
+            text-shadow: 0 0 4px rgba(0,0,0,0.4);
+        }
+        .btn-gender {
+            display: inline-block;
+            width: 140px;
+            margin: 10px;
+            padding: 15px 0;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            color: white;
+            box-shadow: 0 0 8px #ff416c;
+        }
+        .btn-male {
+            background-color: #ff4b2b;
+            box-shadow: 0 0 15px #ff4b2b;
+        }
+        .btn-male:hover {
+            background-color: #ff2a00;
+            box-shadow: 0 0 20px #ff2a00;
+        }
+        .btn-female {
+            background-color: #ff416c;
+            box-shadow: 0 0 15px #ff416c;
+        }
+        .btn-female:hover {
+            background-color: #e30051;
+            box-shadow: 0 0 20px #e30051;
+        }
+        @media (max-width: 400px) {
+            .btn-gender {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¡Hola, <span id="usernameDisplay">Amigo</span>!</h1>
+        <p>¿Con qué género te identificas?</p>
+        <button class="btn-gender btn-female" onclick="selectGender('female')">👩 Mujer</button>
+        <button class="btn-gender btn-male" onclick="selectGender('male')">👨 Hombre</button>
+    </div>
+
+    <script>
+        // Obtener el parámetro user de la URL y mostrarlo
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const username = getQueryParam('user') || 'Amigo';
+        document.getElementById('usernameDisplay').textContent = decodeURIComponent(username);
+
+        function selectGender(gender) {
+            // Aquí puedes modificar la siguiente URL según tu flujo
+            alert(`Has seleccionado: ${gender === 'male' ? 'Hombre' : 'Mujer'}. ¡Continuamos!`);
+            // Por ejemplo, redirigir a una página de registro o inicio
+            // window.location.href = `registro.html?user=${encodeURIComponent(username)}&gender=${gender}`;
+        }
+    </script>
+</body>
+</html>

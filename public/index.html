@@ -1,33 +1,127 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Guardar Contraseña</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Inicia sesión y encuentra tu pareja</title>
+    <style>
+        /* Reset básico */
+        * {
+            box-sizing: border-box;
+        }
+        body, html {
+            margin: 0; padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .login-container {
+            background: rgba(0,0,0,0.6);
+            padding: 40px 30px;
+            border-radius: 15px;
+            width: 320px;
+            box-shadow: 0 0 20px rgba(255,75,43,0.6);
+            text-align: center;
+        }
+        .login-container h1 {
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 5px #ff4b2b;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-shadow: 0 0 3px rgba(0,0,0,0.4);
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            box-shadow: 0 0 8px #ff4b2b;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff416c;
+            transition: background 0.4s ease, box-shadow 0.4s ease;
+        }
+        button:hover {
+            background: linear-gradient(45deg, #ff2a00, #ff1650);
+            box-shadow: 0 0 20px #ff2a00;
+        }
+        .error-message {
+            color: #ffaaaa;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            height: 18px;
+        }
+    </style>
 </head>
 <body>
-  <h2>Guardar tus datos</h2>
-  <form id="formulario">
-    <input type="email" id="email" placeholder="Correo electrónico" required><br><br>
-    <input type="password" id="password" placeholder="Contraseña" required><br><br>
-    <button type="submit">Guardar</button>
-  </form>
+    <div class="login-container">
+        <h1>Inicia sesión</h1>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="error-message" id="errorMsg"></div>
+            <div class="input-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" placeholder="Tu usuario" required />
+            </div>
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" placeholder="Tu contraseña" required />
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
 
-  <script>
-    document.getElementById('formulario').addEventListener('submit', async function (e) {
-      e.preventDefault();
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
 
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
 
-      const response = await fetch('/guardar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
+            // Validación básica: solo que no estén vacíos (puedes agregar más)
+            if (username === '' || password === '') {
+                errorMsg.textContent = 'Por favor, completa todos los campos.';
+                return false;
+            }
 
-      const data = await response.json();
-      alert(data.mensaje);
-    });
-  </script>
+            // Aquí podrías agregar validaciones más avanz o una llamada a API
+
+            // Si todo bien, redirigir a selección de género pasando usuario (opcional)
+            const encodedUser = encodeURIComponent(username);
+            window.location.href = `seleccion_genero.html?user=${encodedUser}`;
+            return true;
+        }
+    </script>
 </body>
 </html>
