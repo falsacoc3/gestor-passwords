@@ -4,73 +4,51 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard - Gestor de Contraseñas</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.5rem; border: 1px solid #ccc; text-align: left; }
+    th { background-color: #eee; }
+  </style>
 </head>
 <body>
-  <h1>Gestor de Contraseñas</h1>
-
-  <h2>Guardar Contraseña</h2>
-  <form id="formGuardar">
-    <label for="nombre">Nombre:</label><br />
-    <input type="text" id="nombre" name="nombre" required /><br /><br />
-    
-    <label for="password">Contraseña:</label><br />
-    <input type="password" id="password" name="password" required /><br /><br />
-    
-    <button type="submit">Guardar</button>
-  </form>
-
-  <h2>Contraseñas Guardadas</h2>
-  <ul id="listaContraseñas"></ul>
+  <h1>Contraseñas Guardadas</h1>
+  <table>
+    <thead>
+      <tr><th>ID</th><th>Nombre</th><th>Contraseña</th></tr>
+    </thead>
+    <tbody id="tabla-contrasenas">
+      <tr><td colspan="3">Cargando...</td></tr>
+    </tbody>
+  </table>
 
   <script>
-    const form = document.getElementById('formGuardar');
-    const lista = document.getElementById('listaContraseñas');
-
-    // Cargar y mostrar contraseñas guardadas
-    async function cargarContraseñas() {
+    async function cargarContrasenas() {
       try {
         const res = await fetch('/datos');
-        const datos = await res.json();
+        if (!res.ok) throw new Error('Error al obtener datos');
+        const contrasenas = await res.json();
 
-        lista.innerHTML = '';
-        datos.forEach(({ id, nombre, password }) => {
-          const li = document.createElement('li');
-          li.textContent = `${nombre} : ${password}`;
-          lista.appendChild(li);
+        const tbody = document.getElementById('tabla-contrasenas');
+        tbody.innerHTML = ''; // Limpiar tabla
+
+        if (contrasenas.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="3">No hay contraseñas guardadas</td></tr>';
+          return;
+        }
+
+        contrasenas.forEach(({ id, nombre, password }) => {
+          const fila = document.createElement('tr');
+          fila.innerHTML = `<td>${id}</td><td>${nombre || '(sin nombre)'}</td><td>${password}</td>`;
+          tbody.appendChild(fila);
         });
-      } catch {
-        lista.textContent = 'Error cargando contraseñas';
+      } catch (error) {
+        const tbody = document.getElementById('tabla-contrasenas');
+        tbody.innerHTML = `<tr><td colspan="3">Error cargando contraseñas: ${error.message}</td></tr>`;
       }
     }
 
-    form.addEventListener('submit', async e => {
-      e.preventDefault();
-      const nombre = document.getElementById('nombre').value.trim();
-      const password = document.getElementById('password').value.trim();
-
-      if (!nombre || !password) {
-        alert('Completa todos los campos');
-        return;
-      }
-
-      try {
-        const res = await fetch('/guardar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre, password })
-        });
-        const data = await res.json();
-
-        alert(data.mensaje);
-        form.reset();
-        cargarContraseñas();
-      } catch {
-        alert('Error guardando contraseña');
-      }
-    });
-
-    // Cargar al inicio
-    cargarContraseñas();
+    cargarContrasenas();
   </script>
 </body>
 </html>
