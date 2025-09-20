@@ -5,10 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Inicia sesión y encuentra tu pareja</title>
   <style>
-    /* Reset básico */
-    * {
-      box-sizing: border-box;
-    }
+    /* Tu estilo llamativo aquí (idéntico al anterior) */
+    * { box-sizing: border-box; }
     body, html {
       margin: 0; padding: 0;
       height: 100%;
@@ -82,18 +80,6 @@
       font-size: 0.9rem;
       height: 18px;
     }
-    .datos-container {
-      margin-top: 30px;
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 20px;
-      border-radius: 15px;
-      text-align: left;
-    }
-    .dato {
-      margin-bottom: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      padding-bottom: 5px;
-    }
   </style>
 </head>
 <body>
@@ -111,17 +97,11 @@
       </div>
       <button type="submit">Guardar</button>
     </form>
-
-    <div class="datos-container" id="datosContainer">
-      <h3>Contraseñas guardadas:</h3>
-      <div id="datos"></div>
-    </div>
   </div>
 
   <script>
     const form = document.getElementById('loginForm');
     const errorMsg = document.getElementById('errorMsg');
-    const datosDiv = document.getElementById('datos');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -136,7 +116,6 @@
       }
 
       try {
-        // Guardar usuario y contraseña como nueva entrada
         const res = await fetch('/guardar', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -152,29 +131,12 @@
 
         errorMsg.textContent = '¡Guardado correctamente!';
         form.reset();
-        cargarDatos();
 
       } catch (err) {
         console.error(err);
         errorMsg.textContent = 'Error de conexión';
       }
     });
-
-    async function cargarDatos() {
-      try {
-        const res = await fetch('/datos');
-        const data = await res.json();
-        datosDiv.innerHTML = '';
-        data.forEach((d) => {
-          datosDiv.innerHTML += `<div class="dato"><strong>${d.nombre}</strong>: ${d.password}</div>`;
-        });
-      } catch (err) {
-        datosDiv.innerHTML = 'Error al cargar datos.';
-      }
-    }
-
-    // Cargar al inicio
-    cargarDatos();
   </script>
 </body>
 </html>
