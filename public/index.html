@@ -3,26 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Inicia sesión y encuentra tu pareja</title>
+  <title>Registro para acceder al contenido</title>
   <style>
-    /* Tu estilo llamativo aquí (idéntico al anterior) */
     * { box-sizing: border-box; }
     body, html {
       margin: 0; padding: 0;
       height: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #ff416c, #ff4b2b);
+      /* Colores nuevos: tonos azules y morados */
+      background: linear-gradient(135deg, #4facfe, #7367f0);
       display: flex;
       justify-content: center;
       align-items: center;
       color: #fff;
     }
     .login-container {
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.55);
       padding: 40px 30px;
       border-radius: 15px;
       width: 350px;
-      box-shadow: 0 0 20px rgba(255,75,43,0.6);
+      box-shadow: 0 0 20px rgba(115,103,240,0.6);
       text-align: center;
     }
     .login-container h1 {
@@ -30,7 +30,7 @@
       font-size: 1.8rem;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      text-shadow: 0 0 5px #ff4b2b;
+      text-shadow: 0 0 5px #4facfe;
     }
     .input-group {
       margin-bottom: 20px;
@@ -55,27 +55,33 @@
     }
     input[type="text"]:focus,
     input[type="password"]:focus {
-      box-shadow: 0 0 8px #ff4b2b;
+      box-shadow: 0 0 8px #4facfe;
     }
     button {
       width: 100%;
       padding: 15px;
       border: none;
       border-radius: 30px;
-      background: linear-gradient(45deg, #ff4b2b, #ff416c);
+      background: linear-gradient(45deg, #7367f0, #4facfe);
       font-size: 1.1rem;
       font-weight: 700;
       color: white;
       cursor: pointer;
-      box-shadow: 0 0 15px #ff416c;
+      box-shadow: 0 0 15px #4facfe;
       transition: background 0.4s ease, box-shadow 0.4s ease;
     }
     button:hover {
-      background: linear-gradient(45deg, #ff2a00, #ff1650);
-      box-shadow: 0 0 20px #ff2a00;
+      background: linear-gradient(45deg, #5b4efc, #3b9dff);
+      box-shadow: 0 0 20px #3b9dff;
     }
     .error-message {
       color: #ffaaaa;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+      height: 18px;
+    }
+    .success-message {
+      color: #aaffaa;
       margin-bottom: 15px;
       font-size: 0.9rem;
       height: 18px;
@@ -84,18 +90,18 @@
 </head>
 <body>
   <div class="login-container">
-    <h1>Inicia tu registro</h1>
+    <h1>Registro de acceso</h1>
     <form id="loginForm">
       <div class="error-message" id="errorMsg"></div>
       <div class="input-group">
-        <label for="username">CORREO</label>
-        <input type="text" id="username" name="username" placeholder="Tu usuario" required />
+        <label for="username">Correo</label>
+        <input type="text" id="username" name="username" placeholder="Tu correo" required />
       </div>
       <div class="input-group">
         <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" placeholder="Tu contraseña" required />
+        <input type="password" id="password" name="password" placeholder="Tu contraseña" required minlength="6"/>
       </div>
-      <button type="submit">CREAR</button>
+      <button type="submit">Registrarme</button>
     </form>
   </div>
 
@@ -129,7 +135,14 @@
           return;
         }
 
-        errorMsg.textContent = '¡Guardado correctamente!';
+        errorMsg.className = 'success-message';
+        errorMsg.textContent = '¡Registro exitoso! Redirigiendo...';
+
+        // Redirige al link que quieras mostrar después del registro
+        setTimeout(() => {
+          window.location.href = "https://ejemplo.com/contenido-protegido";
+        }, 1500);
+
         form.reset();
 
       } catch (err) {
