@@ -5,49 +5,123 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dashboard - Gestor de Contraseñas</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 2rem; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 0.5rem; border: 1px solid #ccc; text-align: left; }
-    th { background-color: #eee; }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #7367f0);
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #000;
+    }
+    form {
+      margin-bottom: 30px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+    input {
+      width: 200px;
+    }
+    button {
+      background: #fff;
+      color: #4facfe;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    button:hover {
+      background: #4facfe;
+      color: #fff;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 80%;
+      background-color: #fff;
+      color: #000;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    th {
+      background-color: #7367f0;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
-  <h1>Contraseñas Guardadas</h1>
-  <table>
+  <h1>Gestor de Contraseñas</h1>
+
+  <form id="formGuardar">
+    <input type="text" id="correo" placeholder="Correo" required />
+    <input type="text" id="password" placeholder="Contraseña" required />
+    <button type="submit">Guardar</button>
+  </form>
+
+  <h2>Contraseñas guardadas</h2>
+  <table id="tablaContrasenas">
     <thead>
-      <tr><th>ID</th><th>Nombre</th><th>Contraseña</th></tr>
+      <tr>
+        <th>ID</th>
+        <th>Correo</th>
+        <th>Contraseña</th>
+      </tr>
     </thead>
-    <tbody id="tabla-contrasenas">
-      <tr><td colspan="3">Cargando...</td></tr>
-    </tbody>
+    <tbody></tbody>
   </table>
 
   <script>
-    async function cargarContrasenas() {
-      try {
-        const res = await fetch('/datos');
-        if (!res.ok) throw new Error('Error al obtener datos');
-        const contrasenas = await res.json();
+    const form = document.getElementById('formGuardar');
+    const tabla = document.querySelector('#tablaContrasenas tbody');
 
-        const tbody = document.getElementById('tabla-contrasenas');
-        tbody.innerHTML = ''; // Limpiar tabla
+    // Guardar nuevo registro
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const correo = document.getElementById('correo').value.trim();
+      const password = document.getElementById('password').value.trim();
 
-        if (contrasenas.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="3">No hay contraseñas guardadas</td></tr>';
-          return;
-        }
+      const res = await fetch('/guardar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo, password }) // 👈 corregido
+      });
 
-        contrasenas.forEach(({ id, nombre, password }) => {
-          const fila = document.createElement('tr');
-          fila.innerHTML = `<td>${id}</td><td>${nombre || '(sin nombre)'}</td><td>${password}</td>`;
-          tbody.appendChild(fila);
-        });
-      } catch (error) {
-        const tbody = document.getElementById('tabla-contrasenas');
-        tbody.innerHTML = `<tr><td colspan="3">Error cargando contraseñas: ${error.message}</td></tr>`;
-      }
-    }
+      const data = await res.json();
+      alert(data.mensaje);
+      form.reset();
+      cargarContrasenas();
+    });
 
+    // Cargar registros existentes
+async function cargarContrasenas() {
+  try {
+    const res = await fetch('/api/usuarios'); // 👈 CAMBIA /datos por /api/usuarios
+    if (!res.ok) throw new Error("Error al obtener datos");
+
+    const contrasenas = await res.json();
+
+    tabla.innerHTML = '';
+    contrasenas.forEach(row => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${row.id}</td><td>${row.correo}</td><td>${row.password}</td>`;
+      tabla.appendChild(tr);
+    });
+  } catch (err) {
+    tabla.innerHTML = `<tr><td colspan="3">Error cargando contraseñas: ${err.message}</td></tr>`;
+  }
+}
+
+    // Cargar al iniciar
     cargarContrasenas();
   </script>
 </body>
