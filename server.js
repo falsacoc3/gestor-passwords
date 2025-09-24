@@ -1,34 +1,30 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurar middleware
-app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Crear/conectar base de datos SQLite
+// Configurar base de datos
 const db = new sqlite3.Database('./db.sqlite', (err) => {
   if (err) {
-    console.error('Error al conectar la base de datos:', err.message);
+    console.error('Error abriendo DB', err);
   } else {
-    console.log('Conectado a la base de datos SQLite');
+    console.log('Base de datos conectada');
+    // Crear tabla si no existe
+    db.run(`CREATE TABLE IF NOT EXISTS usuarios (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      correo TEXT NOT NULL,
+      password TEXT NOT NULL
+    )`);
   }
 });
 
-// Crear tabla si no existe
-db.run(`
-  CREATE TABLE IF NOT EXISTS contrasenas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT,
-    password TEXT
-  )
-`);
+// Middleware
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Ruta para guardar una nueva contraseña
+// Ruta para guardar usuario
 app.post('/guardar', (req, res) => {
   const { nombre, password } = req.body;
 
@@ -36,32 +32,27 @@ app.post('/guardar', (req, res) => {
     return res.status(400).json({ mensaje: 'Faltan datos' });
   }
 
-  db.run(`INSERT INTO contrasenas (nombre, password) VALUES (?, ?)`, [nombre, password], function (err) {
+  const sql = 'INSERT INTO usuarios (correo, password) VALUES (?, ?)';
+  db.run(sql, [nombre, password], function(err) {
     if (err) {
-      console.error('Error al guardar:', err.message);
+      console.error(err);
       return res.status(500).json({ mensaje: 'Error al guardar' });
     }
-    res.json({ mensaje: 'Contraseña guardada correctamente' });
+    res.json({ mensaje: 'Guardado con éxito', id: this.lastID });
   });
 });
 
-// Ruta para obtener todas las contraseñas
-app.get('/datos', (req, res) => {
-  db.all(`SELECT * FROM contrasenas`, [], (err, rows) => {
+// Ruta para obtener los registros (para tu dashboard)
+app.get('/api/usuarios', (req, res) => {
+  db.all('SELECT * FROM usuarios', [], (err, rows) => {
     if (err) {
-      console.error('Error al leer:', err.message);
-      return res.status(500).json({ mensaje: 'Error al leer' });
+      return res.status(500).json({ mensaje: 'Error al leer DB' });
     }
     res.json(rows);
   });
 });
 
-// Ruta para servir el archivo HTML principal (opcional)
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-// Iniciar servidor
+// Arrancar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor activo en http://localhost:${PORT}`);
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
